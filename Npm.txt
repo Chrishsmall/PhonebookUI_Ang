@@ -1,3 +1,0 @@
-npm install -g @angular/cli 
-npm i -g devextreme-cli
-npx -p devextreme-cli devextreme add devextreme-angular
