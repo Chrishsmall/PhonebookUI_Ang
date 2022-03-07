@@ -3,6 +3,8 @@
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.2.5.
 Well the base files was generated, but they are empty shells.
 
+Remember to change the BL URL in the config.service.ts file
+
 ## Design Image and Video is in the |Design and Video| folder
 
 I needed to shorten the video a bit to save some space. The end really just shows the design image "Phonebook Application Design.png" 
