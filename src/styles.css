@@ -1,0 +1,100 @@
+/* You can add global styles to this file, and also import other style files */
+.contentLeft{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--darkPurple);
+  }
+  .content-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 25px;
+    padding-left: 26px;
+  }
+  .mainButton{
+    background-color: rgb(57, 190, 207);
+     border: 1px solid  rgb(4, 76, 88);
+    border-radius: 3px;
+    color: black;
+    min-width: 120px;
+    margin: 5px;
+    height: 35px;
+    font-size: 1.01em;
+    cursor: pointer;
+    text-align: center;
+    transition-duration: 0.4s;
+    text-decoration: none;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .mainButtonAnchor{
+    background-color: rgb(65, 65, 66);
+    border: 1px solid var(--white);
+    border-radius: 25px;
+    color: white;
+    min-width: 120px;
+    margin: 5px;
+    height: 35px;
+    font-size: 1.01em;
+  }
+  .mainButton:after {
+    content: "";
+    background: #f1f1f1;
+    display: block;
+    position: absolute;
+    padding-top: 300%;
+    padding-left: 350%;
+    margin-left: -20px !important;
+    margin-top: -120%;
+    opacity: 0;
+    transition: all 0.8s
+  }
+  
+  .mainButton:active:after {
+    padding: 0;
+    margin: 0;
+    opacity: 1;
+    transition: 0s
+  }
+  .mainButton:hover {
+      border: 1px solid  rgb(74, 167, 170);
+      background-color:  rgb(89, 205, 209);
+      color: black;
+      box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+  }
+
+  .row{
+    display: flex;
+    flex-direction: row;
+
+  }
+  .column{
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+    
+  }
+
+  .normaltext{
+      color: rgb(87, 86, 86);
+  }
+  .navigationHeader{
+    height: 35px;
+    padding-left: 15px;
+    width: 80%;
+    color: white;
+    background-color: rgb(78, 155, 202);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 20px 0px 20px 0px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: bold;
+  }
+  
+  

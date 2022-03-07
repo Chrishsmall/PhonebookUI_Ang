@@ -1,0 +1,145 @@
+<div class="navigationHeader">Contact List</div>
+<div class="row" style="margin-left: 50px;">
+  <div class="column">
+    <div class="row" style="justify-content: flex-start;">
+      <dx-lookup #PhonebookLookup [dataSource]="PbDataSource" valueExpr="id" displayExpr="name"
+        placeholder="Select a phonebook..." [(value)]="selectedPhonebook.id"
+        (onValueChanged)="lookup_valueChanged($event)" style="width: 80%;">
+        <dxo-drop-down-options [closeOnOutsideClick]="true" [showTitle]="false" style="width: 200px;">
+        </dxo-drop-down-options>
+      </dx-lookup>
+      <dx-button icon="plus" (onClick)="addPhonebook()" style="margin-left:5px"> </dx-button>
+      <dx-button icon="edit" (onClick)="editPhonebook()" [disabled]="disablePhoneEdit" style="margin-left:5px">
+      </dx-button>
+      <dx-button icon="trash" (onClick)="askDeletePhonebook()" [disabled]="disablePhoneEdit" style="margin-left:5px">
+      </dx-button>
+    </div>
+  </div>
+</div>
+<div class="row" style="margin-top: 25px;margin-left: 50px;">
+  <div class="column">
+    <dx-data-grid id="gridPBEntries" [allowColumnResizing]="true" [allowColumnReordering]="true" [showBorders]="true"
+      [dataSource]="PbEntriesDataSource">
+      <dxo-sorting mode="multiple"></dxo-sorting>
+      <dxo-selection mode="multiple"></dxo-selection>
+      <dxo-search-panel [visible]="true" [width]="240"></dxo-search-panel>
+      <dxo-filter-row [visible]="true"></dxo-filter-row>
+      <dxo-paging [pageSize]="25"></dxo-paging>
+      <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[25, 50, 100]"></dxo-pager>
+      <dxo-state-storing [enabled]="true" type="localStorage" storageKey="gridPBEntries_storage"></dxo-state-storing>
+      <dxi-column dataField="name" dataType="string" caption="Contact Name" width="40%"></dxi-column>
+      <dxi-column dataField="contactNumber" dataType="string" caption="Contact Number" width="40%"></dxi-column>
+      <dxi-column dataField="entryId" caption="Options" width="20%" cellTemplate="edit"></dxi-column>
+      <div *dxTemplate="let d of 'edit'">
+        <dx-button icon="edit" (onClick)="editPBEntry(d.data)"> </dx-button>
+        <dx-button icon="trash" (onClick)="askDeletePbEntry(d.data)"> </dx-button>
+      </div>
+      <dxo-export [enabled]="true" [allowExportSelectedData]="true"></dxo-export>
+    </dx-data-grid>
+  </div>
+  <div class="column" style="margin-left:50px;width: 20%;">
+    <dx-button icon="plus" text="Add new Contact" (onClick)="addPBEntry()" [disabled]="disablePhoneEdit">
+    </dx-button>
+    <label class="normaltext" style="margin-top: 10px;">Filter</label>
+    <div class="row">
+      <dx-text-box [showClearButton]="false" [(value)]="this.pbEntrySearch" placeholder="Search for name here...">
+      </dx-text-box>
+      <dx-button icon="filter" style="margin-left: 5px;" (onClick)="crossFindPbEntry()"> </dx-button>
+      <dx-button icon="clear" style="margin-left: 5px;" (onClick)="clearFilter()"> </dx-button>
+    </div>
+    <div *ngIf="CrossPbEntriesDataSource != null" style="margin-top:10px">
+      <label class="normaltext" >Found these in other Phonebooks:</label>
+      <dx-data-grid id="gridcrossPBEntries" [allowColumnResizing]="true" [allowColumnReordering]="false" [showBorders]="false" style="margin-top:3px"
+      [dataSource]="CrossPbEntriesDataSource">
+      <dxo-sorting mode="multiple"></dxo-sorting>
+      <dxo-search-panel [visible]="false" [width]="240"></dxo-search-panel>
+      <dxo-filter-row [visible]="false"></dxo-filter-row>
+      <dxo-paging [pageSize]="5"></dxo-paging>
+      
+      <dxo-state-storing [enabled]="true" type="localStorage" storageKey="gridcrssPBEntries_storage"></dxo-state-storing>
+      <dxi-column dataField="name" dataType="string" caption="Contact Name" width="40%"></dxi-column>
+      <dxi-column dataField="contactNumber" dataType="string" caption="Contact Number" width="40%"></dxi-column>
+      <dxo-export [enabled]="false" [allowExportSelectedData]="true"></dxo-export>
+    </dx-data-grid>
+    </div>
+  </div>
+</div>
+
+<div class="row" style="margin-top:50px;margin-left: 50px;">
+  <dx-button icon="image" (onClick)="toggleDesign()"> </dx-button>
+  <img *ngIf="showDesign" src="assets/img/Phonebook Application.png">
+</div>
+
+<div id="popup_Phonebook">
+  <dx-popup class="popup" [width]="400" [height]="150" [showTitle]="true" title="Phonebook Details" [dragEnabled]="true"
+    [closeOnOutsideClick]="true" [(visible)]="phonebook_popupVisible">
+    <div class="dx-field">
+      <div class="dx-field-label">Name</div>
+      <div class="dx-field-value">
+        <dx-text-box [showClearButton]="true" [(value)]="this.pendUpdatePhonebook.name"
+          placeholder="Enter name here...">
+        </dx-text-box>
+      </div>
+    </div>
+    <div class="content-footer">
+      <dx-button icon="check" type="success" text="Save" (click)="savePhonebook()"></dx-button>
+    </div>
+  </dx-popup>
+</div>
+
+<div id="popup_PbEntry">
+  <dx-popup class="popup" [width]="400" [height]="180" [showTitle]="true" title="Contact Details" [dragEnabled]="true"
+    [closeOnOutsideClick]="true" [(visible)]="pbEntry_popupVisible">
+
+    <div class="Column">
+      <div class="dx-field">
+        <div class="dx-field-label">Name</div>
+        <div class="dx-field-value">
+          <dx-text-box [showClearButton]="true" [(value)]="this.selectedPbEntry.name" placeholder="Enter name here...">
+            <dx-validator>
+              <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+              <dxi-validation-rule type="pattern" [pattern]="namePattern"
+                message="Please remove any numbers from the name."></dxi-validation-rule>
+              <dxi-validation-rule type="stringLength" [min]="2" message="Name must have at least 2 symbols">
+              </dxi-validation-rule>
+            </dx-validator>
+          </dx-text-box>
+        </div>
+      </div>
+      <div class="dx-field">
+        <div class="dx-field-label">Number</div>
+        <div class="dx-field-value">
+          <dx-text-box [showClearButton]="true" [(value)]="this.selectedPbEntry.contactnumber"
+            placeholder="Enter number here..." mask="### ### ###0"></dx-text-box>
+        </div>
+      </div>
+    </div>
+    <div class="content-footer">
+      <dx-button icon="check" type="success" text="Save" (click)="savePbEntry()"></dx-button>
+    </div>
+  </dx-popup>
+</div>
+
+<div id="popup_DeletePhonebook">
+  <dx-popup class="popup" [width]="400" [height]="180" [showTitle]="true" title="Question" [dragEnabled]="true"
+    [closeOnOutsideClick]="true" [(visible)]="PhonebookDelete_popupVisible">
+    <div>
+      <h2>Phonebook will be removed. Do you wish to continue?</h2>
+    </div>
+    <div class="content-footer">
+      <dx-button icon="check" type="success" text="Continue" (click)="deletePhonebook()"></dx-button>
+    </div>
+  </dx-popup>
+</div>
+
+<div id="popup_DeletePhonebook">
+  <dx-popup class="popup" [width]="400" [height]="180" [showTitle]="true" title="Question" [dragEnabled]="true"
+    [closeOnOutsideClick]="true" [(visible)]="PbEntryDelete_popupVisible">
+    <div>
+      <h2>Contact will be removed. Do you wish to continue?</h2>
+    </div>
+    <div class="content-footer">
+      <dx-button icon="check" type="success" text="Continue" (click)="deletePbEntry()"></dx-button>
+    </div>
+  </dx-popup>
+</div>
